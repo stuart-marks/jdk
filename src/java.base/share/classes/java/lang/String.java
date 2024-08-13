@@ -1599,6 +1599,11 @@ public final class String
      * @return {@code true} if {@link #length()} is {@code 0}, otherwise
      * {@code false}
      *
+     * @apiNote
+     * To determine whether a string contains only
+     * {@linkplain Character#isWhitespace(int) white space}, use
+     * {@link #isBlank() isBlank}.
+     *
      * @since 1.6
      */
     @Override
@@ -3858,9 +3863,14 @@ public final class String
      * begins with the character at index <i>k</i> and ends with the
      * character at index <i>m</i>-that is, the result of
      * {@code this.substring(k, m + 1)}.
-     * <p>
-     * This method may be used to trim space (as defined above) from
-     * the beginning and end of a string.
+     *
+     * @apiNote
+     * This method uses an unusual and outdated definition of space to be
+     * removed from the string. To remove characters based on the Unicode
+     * definition of {@linkplain Character#isWhitespace(int) white space},
+     * use {@link #strip() strip}, {@link #stripIndent() stripIndent},
+     * {@link #stripLeading() stripLeading}, or
+     * {@link #stripTrailing() stripTrailing}.
      *
      * @return  a string whose value is this string, with all leading
      *          and trailing space removed, or this string if it
