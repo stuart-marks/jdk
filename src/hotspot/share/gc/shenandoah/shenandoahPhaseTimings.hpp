@@ -109,10 +109,11 @@ class outputStream;
   f(conc_strong_roots,                              "Concurrent Strong Roots")         \
   SHENANDOAH_PAR_PHASE_DO(conc_strong_roots_,       "  CSR: ", f)                      \
   f(conc_evac,                                      "Concurrent Evacuation")           \
+  f(conc_update_card_table,                         "Concurrent Update Cards")         \
   f(conc_final_roots,                               "Concurrent Final Roots")          \
   f(promote_in_place,                               "  Promote Regions")               \
-  f(final_roots_gross,                              "Pause Verify Final Roots (G)")    \
-  f(final_roots,                                    "Pause Verify Final Roots (N)")    \
+  f(final_verify_gross,                             "Pause Final Verify (G)")          \
+  f(final_verify,                                   "Pause Final Verify (N)")          \
                                                                                        \
   f(init_update_refs_gross,                         "Pause Init Update Refs (G)")      \
   f(init_update_refs,                               "Pause Init Update Refs (N)")      \
@@ -126,6 +127,7 @@ class outputStream;
   f(final_update_refs,                              "Pause Final Update Refs (N)")     \
   f(final_update_refs_verify,                       "  Verify")                        \
   f(final_update_refs_update_region_states,         "  Update Region States")          \
+  f(final_update_refs_transfer_satb,                "  Transfer Old From SATB")        \
   f(final_update_refs_trash_cset,                   "  Trash Collection Set")          \
   f(final_update_refs_rebuild_freeset,              "  Rebuild Free Set")              \
   f(final_update_refs_propagate_gc_state,           "  Propagate GC State")            \
@@ -253,7 +255,7 @@ public:
   void flush_cycle_to_global();
 
   static const char* phase_name(Phase phase) {
-    assert(phase >= 0 && phase < _num_phases, "Out of bound");
+    assert(phase >= 0 && phase < _num_phases, "Out of bounds: %d", phase);
     return _phase_names[phase];
   }
 

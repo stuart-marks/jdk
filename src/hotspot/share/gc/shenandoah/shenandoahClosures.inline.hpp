@@ -39,7 +39,7 @@
 #include "gc/shenandoah/shenandoahTaskqueue.inline.hpp"
 #include "memory/iterator.inline.hpp"
 #include "oops/compressedOops.inline.hpp"
-#include "runtime/atomic.hpp"
+#include "runtime/atomicAccess.hpp"
 #include "runtime/javaThread.hpp"
 
 //
@@ -209,15 +209,13 @@ void ShenandoahCleanUpdateWeakOopsClosure<CONCURRENT, IsAlive, KeepAlive>::do_oo
 }
 
 ShenandoahNMethodAndDisarmClosure::ShenandoahNMethodAndDisarmClosure(OopClosure* cl) :
-  NMethodToOopClosure(cl, true /* fix_relocations */),
-   _bs(BarrierSet::barrier_set()->barrier_set_nmethod()) {
-}
+  NMethodToOopClosure(cl, true /* fix_relocations */) {}
 
 void ShenandoahNMethodAndDisarmClosure::do_nmethod(nmethod* nm) {
   assert(nm != nullptr, "Sanity");
   assert(!ShenandoahNMethod::gc_data(nm)->is_unregistered(), "Should not be here");
   NMethodToOopClosure::do_nmethod(nm);
-  _bs->disarm(nm);
+  ShenandoahNMethod::disarm_nmethod(nm);
 }
 
 
@@ -253,6 +251,10 @@ inline void ShenandoahConcUpdateRefsClosure::work(T* p) {
   _heap->conc_update_with_forwarded(p);
 }
 
+inline void ShenandoahFlushSATB::do_thread(Thread* thread) {
+  // Transfer any partial buffer to the qset for completed buffer processing.
+  _satb_qset.flush_queue(ShenandoahThreadLocalData::satb_mark_queue(thread));
+}
 
 //
 // ========= Utilities

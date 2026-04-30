@@ -289,10 +289,6 @@ void VM_Version::initialize() {
     FLAG_SET_DEFAULT(UseSHA3Intrinsics, false);
   }
 
-  if (!(UseSHA1Intrinsics || UseSHA256Intrinsics || UseSHA512Intrinsics)) {
-    FLAG_SET_DEFAULT(UseSHA, false);
-  }
-
   if (UseSecondarySupersTable && VM_Version::get_model_index() < 5 /* z196/z11 */) {
     if (!FLAG_IS_DEFAULT(UseSecondarySupersTable)) {
       warning("UseSecondarySupersTable requires z196 or later.");
@@ -1549,7 +1545,7 @@ void VM_Version::initialize_cpu_information(void) {
   _no_of_cores  = os::processor_count();
   _no_of_threads = _no_of_cores;
   _no_of_sockets = _no_of_cores;
-  snprintf(_cpu_name, CPU_TYPE_DESC_BUF_SIZE, "s390 %s", VM_Version::get_model_string());
-  snprintf(_cpu_desc, CPU_DETAILED_DESC_BUF_SIZE, "s390 %s", cpu_info_string());
+  os::snprintf_checked(_cpu_name, CPU_TYPE_DESC_BUF_SIZE, "s390 %s", VM_Version::get_model_string());
+  os::snprintf_checked(_cpu_desc, CPU_DETAILED_DESC_BUF_SIZE, "s390 %s", cpu_info_string());
   _initialized = true;
 }
